@@ -89,44 +89,33 @@ f = inline(sprintf(f_str,w),'x1','x2','x3','x4','x5','x6','x7','x8')
 RR = sum((f(X(:,1),X(:,2),X(:,3),X(:,4),X(:,5),X(:,6),X(:,7),X(:,8)) - Y).^2) % R
 
 
-%{
-#f_str = "%f * x + %f";
-#expansion = {@(x) x, @(x) zeros(length(x),1) + 1};
-f_str = "%f * x";
-expansion = {@(x) x};
-Z = expand(expansion, X(:,2));
-[M R w] = powerful_least_squares(Z, Y)
-plot_powerful_ls(f_str, expansion, w, X(:,2), Y);
-%}
 
-% f_str = "%f * x";
-% expansion = {@(x) x};
-% Z = expand(expansion, X);
-% [M R w] = powerful_least_squares(Z, Y)
-% plot_powerful_ls(f_str, expansion, w, X, Y);
-% 
-% f_str = "%f * x + %f * (1)";
-% expansion = {@(x) x, @(x) zeros(length(x),1) + 1};
-% Z = expand(expansion, X);
-% [M R w] = powerful_least_squares(Z, Y)
-% plot_powerful_ls(f_str, expansion, w, X, Y);
-% 
-% f_str = "%f * (x.^2) + %f * (x) + (%f)";
-% expansion = {@(x) x.^2, @(x) x, @(x) 1 + zeros(length(x),1)};
-% f_str = "%f * x.^3 + %f * x.^2";
-% expansion = {@(x) x.^3, @(x) x.^2};
-% f_str = "%f * x.^2 + %f * x";
-% expansion = {@(x) x.^2, @(x) x};
-% f_str = "%f * x.^3 + %f * x";
-% expansion = {@(x) x.^3, @(x) x};
-% f_str = "%f * x.^4";
-% expansion = {@(x) x.^4};
-% 
-% f_str = "%f * sqrt(x-50) + %f * x.^2";
-% expansion = {@(x) sqrt(x-50), @(x) x.^2};
-% Z = expand(expansion, X(:,1));
-% [M R w] = powerful_least_squares(Z, Y); R
-% plot_powerful_ls(f_str, expansion, w, X(:,1), Y);
+%f_str = "%f * x + %f";
+%expansion = {@(x) x, @(x) zeros(length(x),1) + 1};
+f_str = "%f * x + %f";
+expansion = {@(x) x, @(x) zeros(length(x),1) + 1};
+Z = expand(expansion, X(:,1));
+[M R w] = powerful_least_squares(Z, Y)
+plot_powerful_ls(f_str, expansion, w, X(:,1), Y);
+
+f_str = "%f * (x.^2) + %f * (x) + (%f)";
+expansion = {@(x) x.^2, @(x) x, @(x) 1 + zeros(length(x),1)};
+Z = expand(expansion, X(:,1));
+[M R w] = powerful_least_squares(Z, Y)
+plot_powerful_ls(f_str, expansion, w, X(:,1), Y);
+ 
+
+f_str = "%f * x.^3 + %f * x.^2 + %f * (x) + (%f)";
+expansion = {@(x) x.^3, @(x) x.^2, @(x) x, @(x) 1 + zeros(length(x),1)};
+Z = expand(expansion, X(:,1));
+[M R w] = powerful_least_squares(Z, Y)
+plot_powerful_ls(f_str, expansion, w, X(:,1), Y);
+
+f_str = "%f * sqrt(x-50) + %f * x.^2";
+expansion = {@(x) sqrt(x-50), @(x) x.^2};
+Z = expand(expansion, X(:,1));
+[M R w] = powerful_least_squares(Z, Y); R
+plot_powerful_ls(f_str, expansion, w, X(:,1), Y);
 
 figure_number = 1;
 
