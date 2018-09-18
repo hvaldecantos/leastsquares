@@ -36,6 +36,7 @@ R = sum((f(X(:,1),X(:,2),X(:,3))-Y).^2) % R
 %plot_powerful_ls(f_str, expansion, w, X(:,3), Y);
 %}
 
+%{
 d = importdata("ex01.data.txt");
 x = d(:,1); y = d(:,2);
 f_str = {"%f * 1"
@@ -59,6 +60,7 @@ for i=1:size(f_str)
   [M R w] = powerful_least_squares(Z, y)
   plot_powerful_ls(f_str{i}, expansion{i}, w, x, y);
 end
+%}
 
 %{
 d = importdata("traindata.txt");
@@ -74,18 +76,18 @@ for i=1:8
 end
 %}
 
-%{
+
 d = importdata("traindata.txt");
 test = importdata("testinputs.txt");
 X = d(:,1:8); Y = d(:,9);
-Z = [X'; zeros(1,length(Z))+1];
+Z = [X'; zeros(1,length(X))+1];
 f_str = "%f * x1 + %f * x2 + %f * x3 + %f * x4 + %f * x5 + %f * x6 + %f * x7 + %f * x8 + %f * 1";
 expansion = {@(x) x, @(x) x, @(x) x, @(x) x, @(x) x, @(x) x, @(x) x, @(x) x, @(x) zeros(length(x),1) + 1};
 %Z = expand(expansion, X);
 [M R w] = powerful_least_squares(Z, Y); R
 f = inline(sprintf(f_str,w),'x1','x2','x3','x4','x5','x6','x7','x8')
 RR = sum((f(X(:,1),X(:,2),X(:,3),X(:,4),X(:,5),X(:,6),X(:,7),X(:,8)) - Y).^2) % R
-%}
+
 
 %{
 #f_str = "%f * x + %f";
