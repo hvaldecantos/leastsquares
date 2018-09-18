@@ -6,6 +6,7 @@ figure_number = 1;
 %   scatter(X(:,i), y, 10, "r", "filled"); hold on;
 % end
 
+%{
 X = [1;2;5]; Y = [2;7;9];
 f_str = "%f * x + %f ";
 expansion = {@(x) x, @(x) zeros(length(x),1) + 1};
@@ -18,23 +19,21 @@ Z = expand(expansion, X)
 f_str = sprintf(f_str, w);
 f = inline(f_str);
 plotdata(X,Y,f, strcat('y = ', f_str));
+%}
 
-%{
 d = importdata("iq.physical.characteristics.data.txt");
 X = d.data(:,2:4); Y = d.data(:,1);
-
-Z = [zeros(1,length(Z))+1; X'];
+Z = [zeros(1,length(X))+1; X'];
 
 f_str = "%f * 1 + %f * x + %f * y + %f * z";
 expansion = {@(x) zeros(length(x),1) + 1, @(x) x, @(x) x, @(x) x};
-%Z = expand(expansion, X);
-[M R w] = powerful_least_squares(Z, Y)
+[M R w] = powerful_least_squares(Z, Y); R
 f = inline(sprintf(f_str,w),'x','y','z')
-sum((f(X(:,1),X(:,2),X(:,3))-Y).^2) % R
+R = sum((f(X(:,1),X(:,2),X(:,3))-Y).^2) % R
 %plot_powerful_ls(f_str, expansion, w, X(:,1), Y);
 %plot_powerful_ls(f_str, expansion, w, X(:,2), Y);
 %plot_powerful_ls(f_str, expansion, w, X(:,3), Y);
-%}
+
 
 %{
 d = importdata("ex01.data.txt");
