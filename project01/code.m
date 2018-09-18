@@ -21,20 +21,23 @@ f = inline(f_str);
 plotdata(X,Y,f, strcat('y = ', f_str));
 %}
 
-%{
+
 d = importdata("iq.physical.characteristics.data.txt");
 X = d.data(:,2:4); Y = d.data(:,1);
-Z = [zeros(1,length(X))+1; X'];
 
 f_str = "%f * 1 + %f * x + %f * y + %f * z";
-expansion = {@(x) zeros(length(x),1) + 1, @(x) x, @(x) x, @(x) x};
+f_str = "%f * x.^2 + %f * x + %f * y.^2 + %f * y + %f * z.^2 + %f * z + %f * 1";
+expansion = {{@(x) ones(length(x),1), 1}, {@(x) x, 1}, {@(y) y, 2}, {@(z) z, 3}};
+expansion = {{@(x) x.^2, 1}, {@(x) x, 1}, {@(y) y.^2, 2}, {@(y) y, 2}, {@(z) z.^2, 3}, {@(z) z, 3}, {@(x) ones(length(x),1), 1}};
+
+Z = expand(expansion, X);
 [M R w] = powerful_least_squares(Z, Y); R
 f = inline(sprintf(f_str,w),'x','y','z')
-R = sum((f(X(:,1),X(:,2),X(:,3))-Y).^2) % R
+sum((f(X(:,1),X(:,2),X(:,3)) - Y).^2) % R
 %plot_powerful_ls(f_str, expansion, w, X(:,1), Y);
-%plot_powerful_ls(f_str, expansion, w, X(:,2), Y);
-%plot_powerful_ls(f_str, expansion, w, X(:,3), Y);
-%}
+% %plot_powerful_ls(f_str, expansion, w, X(:,2), Y);
+% %plot_powerful_ls(f_str, expansion, w, X(:,3), Y);
+
 
 %{
 d = importdata("ex01.data.txt");
@@ -76,7 +79,7 @@ for i=1:8
 end
 %}
 
-
+%{
 d = importdata("traindata.txt");
 test = importdata("testinputs.txt");
 X = d(:,1:8); Y = d(:,9);
@@ -116,6 +119,7 @@ expansion = {@(x) sqrt(x-50), @(x) x.^2};
 Z = expand(expansion, X(:,1));
 [M R w] = powerful_least_squares(Z, Y); R
 plot_powerful_ls(f_str, expansion, w, X(:,1), Y);
+%}
 
 figure_number = 1;
 
@@ -156,17 +160,6 @@ function x = back_substitute(A, b)
 %     x(i) = (b(i) - A(i,i+1:Na)*x(i+1:Na))/A(i,i);
 %   end
   
-end
-
-function Z = expand(fs, x)
-  [Mfs Nfs] = size(fs);
-  [Mx Nx] = size(x);
-  
-  Z = zeros(Nfs, Mx);
- 
-  for i=1:Nfs
-    Z(i,:) = fs{i}(x);
-  end
 end
 
 function [M R w] = powerful_least_squares(Z, y)
