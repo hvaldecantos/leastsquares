@@ -42,21 +42,16 @@ sum((f(X(:,1),X(:,2),X(:,3)) - Y).^2) % R
 
 d = importdata("ex01.data.txt");
 x = d(:,1); y = d(:,2);
-f_str = {"%f * x.^0"
-         "%f * x.^0 + %f * x.^1"
-         "%f * x.^0 + %f * x.^1 + %f * x.^2"
-         "%f * x.^0 + %f * x.^1 + %f * x.^2 + %f * x.^3"
-         "%f * x.^0 + %f * x.^1 + %f * x.^2 + %f * x.^3 + %f * x.^4"
-         "%f * x.^0 + %f * x.^1 + %f * x.^2 + %f * x.^3 + %f * x.^4 + %f * x.^5"
-         "%f * x.^0 + %f * x.^1 + %f * x.^2 + %f * x.^3 + %f * x.^4 + %f * x.^5 + %f * x.^6"
-         "%f * x.^0 + %f * x.^1 + %f * x.^2 + %f * x.^3 + %f * x.^4 + %f * x.^5 + %f * x.^6 + %f * x.^7"
-         "%f * x.^0 + %f * x.^1 + %f * x.^2 + %f * x.^3 + %f * x.^4 + %f * x.^5 + %f * x.^6 + %f * x.^7 + %f * x.^8"
-         "%f * x.^0 + %f * x.^1 + %f * x.^2 + %f * x.^3 + %f * x.^4 + %f * x.^5 + %f * x.^6 + %f * x.^7 + %f * x.^8 + %f * x.^9"
-         "%f * x.^0 + %f * x.^1 + %f * x.^2 + %f * x.^3 + %f * x.^4 + %f * x.^5 + %f * x.^6 + %f * x.^7 + %f * x.^8 + %f * x.^9 + %f * x.^10"};
 
-expansion = {}
-for i=0:10
+expansion = {};
+f_str = {};
+degree = 10;
+sss = "";
+for i=0:degree
     expansion{i+1} = get_polynomio(i);
+    sss =  sss + "%f" + sprintf(" * x.^%d",i);
+    f_str{i+1} = sss;
+    sss = sss + " + ";
 end
 
 for i=1:length(f_str)
