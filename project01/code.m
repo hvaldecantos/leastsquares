@@ -21,6 +21,7 @@ f = inline(f_str);
 plotdata(X,Y,f, strcat('y = ', f_str));
 %}
 
+%{
 d = importdata("iq.physical.characteristics.data.txt");
 X = d.data(:,2:4); Y = d.data(:,1);
 Z = [zeros(1,length(X))+1; X'];
@@ -33,9 +34,8 @@ R = sum((f(X(:,1),X(:,2),X(:,3))-Y).^2) % R
 %plot_powerful_ls(f_str, expansion, w, X(:,1), Y);
 %plot_powerful_ls(f_str, expansion, w, X(:,2), Y);
 %plot_powerful_ls(f_str, expansion, w, X(:,3), Y);
+%}
 
-
-%{
 d = importdata("ex01.data.txt");
 x = d(:,1); y = d(:,2);
 f_str = {"%f * 1"
@@ -59,7 +59,6 @@ for i=1:size(f_str)
   [M R w] = powerful_least_squares(Z, y)
   plot_powerful_ls(f_str{i}, expansion{i}, w, x, y);
 end
-%}
 
 %{
 d = importdata("traindata.txt");
