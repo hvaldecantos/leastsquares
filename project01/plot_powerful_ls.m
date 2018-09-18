@@ -1,5 +1,5 @@
 function plot_powerful_ls(f_str, expansion, w, x, y)
-  global figure_number ;
+  global figure_number;
   figure(figure_number);
   figure_number = figure_number + 1;
   
