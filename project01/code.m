@@ -21,7 +21,7 @@ f = inline(f_str);
 plotdata(X,Y,f, strcat('y = ', f_str));
 %}
 
-
+%{
 d = importdata("iq.physical.characteristics.data.txt");
 X = d.data(:,2:4); Y = d.data(:,1);
 
@@ -37,33 +37,39 @@ sum((f(X(:,1),X(:,2),X(:,3)) - Y).^2) % R
 %plot_powerful_ls(f_str, expansion, w, X(:,1), Y);
 % %plot_powerful_ls(f_str, expansion, w, X(:,2), Y);
 % %plot_powerful_ls(f_str, expansion, w, X(:,3), Y);
+%}
 
 
-%{
 d = importdata("ex01.data.txt");
 x = d(:,1); y = d(:,2);
 f_str = {"%f * 1"
          "%f * x + %f * 1"
-         "%f * x.^2 + %f * x + %f * 1"
+         "%f * x.^2 + %f * x + %f * 1"};
+         %{
          "%f * x.^3 + %f * x.^2 + %f * x + %f * 1"
          "%f * x.^4 + %f * x.^3 + %f * x.^2 + %f * x + %f * 1"
          "%f * x.^5 + %f * x.^4 + %f * x.^3 + %f * x.^2 + %f * x + %f * 1"
          "%f * x.^6 + %f * x.^5 + %f * x.^4 + %f * x.^3 + %f * x.^2 + %f * x + %f * 1"
-         "%f * x.^7 + %f * x.^6 + %f * x.^5 + %f * x.^4 + %f * x.^3 + %f * x.^2 + %f * x + %f * 1"};
-expansion = {{@(x) zeros(length(x),1) + 1}
-             {@(x) x, @(x) zeros(length(x),1) + 1}
+         "%f * x.^7 + %f * x.^6 + %f * x.^5 + %f * x.^4 + %f * x.^3 + %f *
+         x.^2 + %f * x + %f * 1"};
+         %}
+expansion = { {{@(x) ones(length(x),1), 1}},
+              {{@(x) x, 1}, {@(x) ones(length(x),1), 1}}
+              {{@(x) x.^2, 1}, {@(x) x, 1}, {@(x) ones(length(x),1), 1}}}
+         %{
              {@(x) x.^2, @(x) x, @(x) zeros(length(x),1) + 1}
              {@(x) x.^3, @(x) x.^2, @(x) x, @(x) zeros(length(x),1) + 1}
              {@(x) x.^4, @(x) x.^3, @(x) x.^2, @(x) x, @(x) zeros(length(x),1) + 1}
              {@(x) x.^5, @(x) x.^4, @(x) x.^3, @(x) x.^2, @(x) x, @(x) zeros(length(x),1) + 1}
              {@(x) x.^6, @(x) x.^5, @(x) x.^4, @(x) x.^3, @(x) x.^2, @(x) x, @(x) zeros(length(x),1) + 1}
              {@(x) x.^7, @(x) x.^6, @(x) x.^5, @(x) x.^4, @(x) x.^3, @(x) x.^2, @(x) x, @(x) zeros(length(x),1) + 1}};
+%}
 for i=1:size(f_str)
   Z = expand(expansion{i}, x);
   [M R w] = powerful_least_squares(Z, y)
   plot_powerful_ls(f_str{i}, expansion{i}, w, x, y);
 end
-%}
+
 
 %{
 d = importdata("traindata.txt");
@@ -178,6 +184,7 @@ function [M R w] = powerful_least_squares(Z, y)
   R = norm(y - y_pred')^2;
 end
 
+%{
 function plot_powerful_ls(f_str, expansion, w, x, y)
   global figure_number ;
   figure(figure_number);
@@ -221,4 +228,4 @@ function plot_powerful_ls(f_str, expansion, w, x, y)
 
 %   #[x y_prediction f(x)]
 end
-
+%}
