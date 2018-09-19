@@ -25,11 +25,11 @@ plotdata(X,Y,f, strcat('y = ', f_str));
 d = importdata("iq.physical.characteristics.data.txt");
 X = d.data(:,2:4); Y = d.data(:,1);
 
-% expansion = get_polynomio(2, ["brain" "height" "weight"]);
+% expansion = get_polynomial(2, ["brain" "height" "weight"]);
 % %expansion = {{@(x) ones(length(x),1), 1}, {@(brain) brain, 1}, {@(brain) brain.^2, 1}, {@(height) height, 2}, {@(height) height.^2, 2}, {@(weight) weight, 3}, {@(weight) weight.^2, 3}};
 % f_str = "%f * 1 + %f * brain.^1 + %f * brain.^2 + %f * height.^1 + %f * height.^2 + %f * weight.^1 + %f * weight.^2";
 
-expansion = get_polynomio(1, ["brain" "height" "weight"]);
+expansion = get_polynomial(1, ["brain" "height" "weight"]);
 %expansion = {{@(brain) ones(length(brain),1), 1}, {@(brain) brain, 1}, {@(height) height, 2}, {@(weight) weight, 3}};
 f_str = "%f * 1 + %f * brain + %f * height + %f * weight";
 
@@ -53,7 +53,7 @@ f_str = {};
 degree = 10;
 sss = "";
 for i=0:degree
-    expansion{i+1} = get_polynomio(i, ["x"]);
+    expansion{i+1} = get_polynomial(i, ["x"]);
     sss =  sss + "%f" + sprintf(" * x.^%d",i);
     f_str{i+1} = sss;
     sss = sss + " + ";

@@ -1,4 +1,4 @@
-function p = get_polynomio(degree, vars)
+function p = get_polynomial(degree, vars)
     index = 1;
     p{index} = {str2func(sprintf("@(x) ones(length(x),1)")), 1};
     
