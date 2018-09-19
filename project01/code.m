@@ -21,23 +21,28 @@ f = inline(f_str);
 plotdata(X,Y,f, strcat('y = ', f_str));
 %}
 
-%{
+
 d = importdata("iq.physical.characteristics.data.txt");
 X = d.data(:,2:4); Y = d.data(:,1);
 
-f_str = "%f * 1 + %f * x + %f * y + %f * z";
-f_str = "%f * x.^2 + %f * x + %f * y.^2 + %f * y + %f * z.^2 + %f * z + %f * 1";
-expansion = {{@(x) ones(length(x),1), 1}, {@(x) x, 1}, {@(y) y, 2}, {@(z) z, 3}};
-expansion = {{@(x) x.^2, 1}, {@(x) x, 1}, {@(y) y.^2, 2}, {@(y) y, 2}, {@(z) z.^2, 3}, {@(z) z, 3}, {@(x) ones(length(x),1), 1}};
+f_str = "%f * 1 + %f * brain + %f * height + %f * weight";
+%f_str = "%f * x.^2 + %f * x + %f * y.^2 + %f * y + %f * z.^2 + %f * z + %f * 1";
+expansion = {{@(brain) ones(length(brain),1), 1}, {@(brain) brain, 1}, {@(height) height, 2}, {@(weight) weight, 3}};
+expansion1 = get_polynomio(1, ["brain" "height" "weight"]);
+%expansion = {{@(brain) ones(length(brain),1), 1}, {@(height) ones(length(height),1), 2}, {@(brain) brain, 1}, {@(height) height, 2}, {@(weight) weight, 3}};
+%expansion = {{@(x) x.^2, 1}, {@(x) x, 1}, {@(y) y.^2, 2}, {@(y) y, 2}, {@(z) z.^2, 3}, {@(z) z, 3}, {@(x) ones(length(x),1), 1}};
 
-Z = expand(expansion, X);
+
+Z = expand(expansion, X)
+
 [M R w] = powerful_least_squares(Z, Y); R
-f = inline(sprintf(f_str,w),'x','y','z')
+f = inline(sprintf(f_str,w),'brain','height','weight')
 sum((f(X(:,1),X(:,2),X(:,3)) - Y).^2) % R
+
 %plot_powerful_ls(f_str, expansion, w, X(:,1), Y);
 % %plot_powerful_ls(f_str, expansion, w, X(:,2), Y);
 % %plot_powerful_ls(f_str, expansion, w, X(:,3), Y);
-%}
+
 
 
 d = importdata("ex01.data.txt");
@@ -48,7 +53,7 @@ f_str = {};
 degree = 10;
 sss = "";
 for i=0:degree
-    expansion{i+1} = get_polynomio(i);
+    expansion{i+1} = get_polynomio(i, ["x"]);
     sss =  sss + "%f" + sprintf(" * x.^%d",i);
     f_str{i+1} = sss;
     sss = sss + " + ";
