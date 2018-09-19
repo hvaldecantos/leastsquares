@@ -7,23 +7,23 @@ function plot_powerful_ls(f_str, expansion, w, x, y)
     ms = 7; % marker size
     fs = 20; % font size
 
-    set(gca,'FontSize',fs)
-    plot(x,y,'o','LineWidth',lw,'MarkerSize',ms)
-    xmargin = abs(min(x)*0.1 - max(x))*0.1
-    ymargin = abs(min(y)*0.1 - max(y))*0.1
-    xlim([min(x)-xmargin max(x)+xmargin])
-    ylim([min(y)-ymargin max(y)+ymargin])
-    xlabel('x')
-    ylabel('y')
+    set(gca,'FontSize',fs);
+    plot(x,y,'o','LineWidth',lw,'MarkerSize',ms);
+    xmargin = abs(min(x)*0.1 - max(x))*0.1;
+    ymargin = abs(min(y)*0.1 - max(y))*0.1;
+    xlim([min(x)-xmargin max(x)+xmargin]);
+    ylim([min(y)-ymargin max(y)+ymargin]);
+    xlabel('x');
+    ylabel('y');
  
-    hold on
+    hold on;
   
     y_prediction = zeros(size(x));
   
     for k=1:length(expansion)
         f = expansion{k}{1};
         i = expansion{k}{2};
-        y_prediction = y_prediction + w(k) * f(x);
+        y_prediction = y_prediction + w(k) * f(x(:,i));
     end
 
     f_str = sprintf(f_str, w);
