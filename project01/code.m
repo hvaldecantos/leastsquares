@@ -25,13 +25,13 @@ plotdata(X,Y,f, strcat('y = ', f_str));
 d = importdata("iq.physical.characteristics.data.txt");
 X = d.data(:,2:4); Y = d.data(:,1);
 
-f_str = "%f * 1 + %f * brain + %f * height + %f * weight";
-%f_str = "%f * x.^2 + %f * x + %f * y.^2 + %f * y + %f * z.^2 + %f * z + %f * 1";
-expansion = {{@(brain) ones(length(brain),1), 1}, {@(brain) brain, 1}, {@(height) height, 2}, {@(weight) weight, 3}};
-expansion1 = get_polynomio(1, ["brain" "height" "weight"]);
-%expansion = {{@(brain) ones(length(brain),1), 1}, {@(height) ones(length(height),1), 2}, {@(brain) brain, 1}, {@(height) height, 2}, {@(weight) weight, 3}};
-%expansion = {{@(x) x.^2, 1}, {@(x) x, 1}, {@(y) y.^2, 2}, {@(y) y, 2}, {@(z) z.^2, 3}, {@(z) z, 3}, {@(x) ones(length(x),1), 1}};
+% expansion = get_polynomio(2, ["brain" "height" "weight"]);
+% %expansion = {{@(x) ones(length(x),1), 1}, {@(brain) brain, 1}, {@(brain) brain.^2, 1}, {@(height) height, 2}, {@(height) height.^2, 2}, {@(weight) weight, 3}, {@(weight) weight.^2, 3}};
+% f_str = "%f * 1 + %f * brain.^1 + %f * brain.^2 + %f * height.^1 + %f * height.^2 + %f * weight.^1 + %f * weight.^2";
 
+expansion = get_polynomio(1, ["brain" "height" "weight"]);
+%expansion = {{@(brain) ones(length(brain),1), 1}, {@(brain) brain, 1}, {@(height) height, 2}, {@(weight) weight, 3}};
+f_str = "%f * 1 + %f * brain + %f * height + %f * weight";
 
 Z = expand(expansion, X)
 
@@ -44,7 +44,7 @@ sum((f(X(:,1),X(:,2),X(:,3)) - Y).^2) % R
 % %plot_powerful_ls(f_str, expansion, w, X(:,3), Y);
 
 
-
+%{
 d = importdata("ex01.data.txt");
 x = d(:,1); y = d(:,2);
 
@@ -64,7 +64,7 @@ for i=1:length(f_str)
   [M R w] = powerful_least_squares(Z, y)
   plot_powerful_ls(f_str{i}, expansion{i}, w, x, y);
 end
-
+%}
 
 %{
 d = importdata("traindata.txt");
