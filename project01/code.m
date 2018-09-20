@@ -13,7 +13,7 @@ expansion = {@(x) x, @(x) zeros(length(x),1) + 1};
 % #f_str = "%f * sqrt(x-0.8)";
 % #expansion = {@(x) sqrt(x-0.8)};
 Z = expand(expansion, X)
-[M R w] = powerful_least_squares(Z, Y)
+[M R w] = least_squares(Z, Y)
 % plot_powerful_ls(f_str, expansion, w, X, Y);
 % sprintf(f_str,w)
 f_str = sprintf(f_str, w);
@@ -35,7 +35,7 @@ f_str = "%f * 1 + %f * brain + %f * height + %f * weight";
 
 Z = expand(expansion, X)
 
-[M R w] = powerful_least_squares(Z, Y); R
+[M R w] = least_squares(Z, Y); R
 f = inline(sprintf(f_str,w),'brain','height','weight')
 sum((f(X(:,1),X(:,2),X(:,3)) - Y).^2) % R
 
@@ -61,7 +61,7 @@ end
 
 for i=1:length(f_str)
   Z = expand(expansion{i}, x);
-  [M R w] = powerful_least_squares(Z, y)
+  [M R w] = least_squares(Z, y)
   plot_powerful_ls(f_str{i}, expansion{i}, w, x, y);
 end
 %}
@@ -91,115 +91,60 @@ f_str = "%f * 1 + %f * x1 + %f * x2 + %f * x3 + %f * x4 + %f * x5 + %f * x6 + %f
 %expansion = {@(x) x, @(x) x, @(x) x, @(x) x, @(x) x, @(x) x, @(x) x, @(x) x, @(x) zeros(length(x),1) + 1};
 expansion = get_polynomial(1, ["x1", "x2", "x3", "x4", "x5", "x6", "x7", "x8"]);
 Z = expand(expansion, X);
-[M R w] = powerful_least_squares(Z, Y); R
+[M R w] = least_squares(Z, Y); R
 f = inline(sprintf(f_str,w),'x1','x2','x3','x4','x5','x6','x7','x8')
 RR = sum((f(X(:,1),X(:,2),X(:,3),X(:,4),X(:,5),X(:,6),X(:,7),X(:,8)) - Y).^2) % R
 
 expansion = get_polynomial(2, ["x1", "x2", "x3", "x4", "x5", "x6", "x7", "x8"]);
 Z = expand(expansion, X);
-[M R w] = powerful_least_squares(Z, Y); R
+[M R w] = least_squares(Z, Y); R
 
 expansion = get_polynomial(3, ["x1", "x2", "x3", "x4", "x5", "x6", "x7", "x8"]);
 Z = expand(expansion, X);
-[M R w] = powerful_least_squares(Z, Y); R
+[M R w] = least_squares(Z, Y); R
 
 expansion = get_polynomial(4, ["x1", "x2", "x3", "x4", "x5", "x6", "x7", "x8"]);
 Z = expand(expansion, X);
-[M R w] = powerful_least_squares(Z, Y); R
+[M R w] = least_squares(Z, Y); R
 
 expansion = get_polynomial(1, ["x1"]);
 Z = expand(expansion, X);
-[M R w] = powerful_least_squares(Z, Y); R
+[M R w] = least_squares(Z, Y); R
 %}
 
 f_str = "%f + %f * x";
 %expansion = {{@(x) ones(length(x),1), 1} {@(x) x, 1}};
 expansion = get_polynomial(1, ["x1", "na", "na", "na", "na", "na", "na", "na"]);
 Z = expand(expansion, X);
-[M R w] = powerful_least_squares(Z, Y)
+[M R w] = least_squares(Z, Y)
 % plot_powerful_ls(f_str, expansion, w, X(:,1), Y);
 
 sprintf("------------")
 f_str = "%f + %f * x";
 expansion = {{@(x) ones(length(x),1), 1} {@(x) x, 1}};
 Z = expand(expansion, X(:,1));
-[M R w] = powerful_least_squares(Z, Y)
+[M R w] = least_squares(Z, Y)
 % plot_powerful_ls(f_str, expansion, w, X(:,1), Y);
 
 %{
 f_str = "%f * (x.^2) + %f * (x) + (%f)";
 expansion = {@(x) x.^2, @(x) x, @(x) 1 + zeros(length(x),1)};
 Z = expand(expansion, X(:,1));
-[M R w] = powerful_least_squares(Z, Y)
+[M R w] = least_squares(Z, Y)
 plot_powerful_ls(f_str, expansion, w, X(:,1), Y);
  
 
 f_str = "%f * x.^3 + %f * x.^2 + %f * (x) + (%f)";
 expansion = {@(x) x.^3, @(x) x.^2, @(x) x, @(x) 1 + zeros(length(x),1)};
 Z = expand(expansion, X(:,1));
-[M R w] = powerful_least_squares(Z, Y)
+[M R w] = least_squares(Z, Y)
 plot_powerful_ls(f_str, expansion, w, X(:,1), Y);
 
 f_str = "%f * sqrt(x-50) + %f * x.^2";
 expansion = {@(x) sqrt(x-50), @(x) x.^2};
 Z = expand(expansion, X(:,1));
-[M R w] = powerful_least_squares(Z, Y); R
+[M R w] = least_squares(Z, Y); R
 plot_powerful_ls(f_str, expansion, w, X(:,1), Y);
 %}
 
 figure_number = 1;
-
-function [A b] = triangularize(A, b)
-  [Ma Na] = size(A);
-  [Mb Nb] = size(b);
-
-  for i=1:Ma
-    for j=i+1:Ma
-      c = -A(j,i)/A(i,i);
-      for k=1:Na
-        A(j,k) = A(j,k) + c * A(i,k);
-      end
-      b(j,1) = b(j,1) + c * b(i,1);
-    end
-  end  
-end
-
-function x = back_substitute(A, b)
-  [Ma Na] = size(A);
-  [Mb Nb] = size(b);
-
-  if(Na ~= Mb)
-      error("cannot multiply matrices")
-  end
-
-  x = zeros(Mb, Nb);
-
-  for i = Na:-1:1
-    c = b(i);
-    for j=i+1:Na
-      c = c - A(i,j)*x(j);
-    end
-    x(i) = c/A(i,i);
-  end
-   
-%   for i = Ma:-1:1
-%     x(i) = (b(i) - A(i,i+1:Na)*x(i+1:Na))/A(i,i);
-%   end
-  
-end
-
-function [M R w] = powerful_least_squares(Z, y)
-  [p N] = size(Z);
-
-  M = zeros(size(Z,1));
-  s = zeros(size(Z,1),1);
-
-  M = Z*Z';
-  s = Z*y;
-
-  [Ap bp] = triangularize(M,s);
-  w = back_substitute(Ap,bp);
-
-  y_pred = w' * Z;
-  R = norm(y - y_pred')^2;
-end
