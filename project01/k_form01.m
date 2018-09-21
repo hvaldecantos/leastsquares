@@ -16,8 +16,11 @@ for p=0:max_p
     [M R w] = least_squares(Z, Y);
     results(p+1, :) = [p R];
 end
-plot(results);
 
+scatter(results(:,1), results(:,2), '*'); hold on
+for i=1:length(results)-1
+    plot([results(i,1) results(i+1,1)], [results(i,2) results(i+1,2)], 'r')
+end
 
 %{
 max_p = 10;
@@ -54,6 +57,14 @@ plot(results);
 % whenP =  10
 % whenVars = "x1"    "x2"    "x3"    "x4"    "x5"    "na"    "x7"    "x8"
 
+folds = get_fold_sizes(X, 10);
+
+function [FoldSizes] = get_fold_sizes(X, number_of_folds)
+    N = length(X);
+    fold_size = floor(N / number_of_folds);
+    FoldSizes = repmat(fold_size,1,number_of_folds);
+    FoldSizes(1, 1:rem(N, number_of_folds)) = FoldSizes(1, 1:rem(N, number_of_folds)) + 1;
+end
 
 function [A] = get_combination(vars)
     n = numel(vars);
