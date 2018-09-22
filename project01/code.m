@@ -49,7 +49,7 @@ x = d(:,1); y = d(:,2);
 
 expansion = {};
 f_str = {};
-degree = 10;
+degree = 12;
 sss = "";
 for i=0:degree
     expansion{i+1} = get_polynomial(i, ["x"]);
@@ -60,10 +60,12 @@ end
 
 results = zeros(degree + 1, 2);
 for i=1:length(f_str)
+  order = i-1;
   Z = expand(expansion{i}, x);
+  
   [M R w] = least_squares(Z, y)
   plot_powerful_ls(f_str{i}, expansion{i}, w, x, y);
-  results(i, :) = [i-1 R];
+  results(i, :) = [order R];
 end
 plot_errors(results, 'r');
 
