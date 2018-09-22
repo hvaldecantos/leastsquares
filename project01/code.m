@@ -44,7 +44,6 @@ sum((f(X(:,1),X(:,2),X(:,3)) - Y).^2) % R
 % %plot_powerful_ls(f_str, expansion, w, X(:,3), Y);
 %}
 
-%{
 d = importdata("ex01.data.txt");
 x = d(:,1); y = d(:,2);
 
@@ -59,12 +58,14 @@ for i=0:degree
     sss = sss + " + ";
 end
 
+results = zeros(degree + 1, 2);
 for i=1:length(f_str)
   Z = expand(expansion{i}, x);
   [M R w] = least_squares(Z, y)
   plot_powerful_ls(f_str{i}, expansion{i}, w, x, y);
+  results(i, :) = [i-1 R];
 end
-%}
+plot_errors(results, 'r');
 
 %{
 d = importdata("traindata.txt");
@@ -80,10 +81,11 @@ for i=1:8
 end
 %}
 
-
+%{
 d = importdata("traindata.txt");
 test = importdata("testinputs.txt");
 X = d(:,1:8); Y = d(:,9);
+%}
 
 %{
 Z = [X'; zeros(1,length(X))+1];
@@ -112,6 +114,7 @@ Z = expand(expansion, X);
 [M R w] = least_squares(Z, Y); R
 %}
 
+%{
 f_str = "%f + %f * x";
 %expansion = {{@(x) ones(length(x),1), 1} {@(x) x, 1}};
 expansion = get_polynomial(1, ["x1", "na", "na", "na", "na", "na", "na", "na"]);
@@ -125,6 +128,7 @@ expansion = {{@(x) ones(length(x),1), 1} {@(x) x, 1}};
 Z = expand(expansion, X(:,1));
 [M R w] = least_squares(Z, Y)
 % plot_powerful_ls(f_str, expansion, w, X(:,1), Y);
+%}
 
 %{
 f_str = "%f * (x.^2) + %f * (x) + (%f)";
