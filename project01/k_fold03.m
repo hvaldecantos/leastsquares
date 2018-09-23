@@ -50,12 +50,17 @@ min_test_err_idx = min_test_err_idx(2);
 min_test_err = min_test_err(2);
 min_test_err_order = results_te(min_test_err_idx, 1);
 
-
 sprintf("Polynomial order: %d\nMin test error  : %f", min_test_err_order, min_test_err)
 
-% poly = get_polynomial(p, ["x1" "x2" "x3" "x4" "x5" "x6" "x7" "x8"]);
-% poly = get_polynomial(p, ["x1" "x2" "x3" "x4" "x5" "x6" "na" "x8"]);
+% poly = get_polynomial(min_test_err_order, ["x1" "x2" "x3" "x4" "x5" "x6" "x7" "x8"]);
+% poly = get_polynomial(min_test_err_order, ["x1" "x2" "x3" "x4" "x5" "x6" "na" "x8"]);
 poly = get_polynomial(min_test_err_order, ["x1" "x2" "na" "x4" "x5" "na" "na" "x8"]);
+
+Z = expand(poly, X);
+y_pred = ws{min_test_err_idx}' * Z;
+training_error = sum((y - y_pred').^2);
+sprintf("Polynomial order: %d\nTraining error  : %f", min_test_err_order, training_error)
+
 Z = expand(poly, Test);
 y_pred = ws{min_test_err_idx}' * Z;
 dlmwrite('predicted_values.txt', num2str(y_pred','%.7e\t'),'delimiter', '');
