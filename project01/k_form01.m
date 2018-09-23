@@ -7,19 +7,40 @@ X = d(:,1:8); Y = d(:,9);
 % Z = expand(expansion, X);
 % [M R w] = least_squares(Z, Y)
 
-max_p = 10;
-results = zeros(max_p + 1,2);
+N = length(X);
+n_training = floor(N*.7);
+n_test = N - n_training;
+ids_shuffled = randperm(N);
+ids_training = ids_shuffled(1:n_training);
+ids_test = ids_shuffled(n_training + 1:N);
+
+X_tr = X(ids_training, :); Y_tr = Y(ids_training, :);
+X_te = X(ids_test, :);     Y_te = X(ids_test, :);
+
+max_p = 15;
+results = zeros(max_p + 1,3);
 for p=0:max_p
     % expansion = get_polynomial(p, ["x1" "x2" "x3" "x4" "x5" "na" "x7" "x8"]);
     expansion = get_polynomial(p, ["x1" "x2" "x3" "x4" "x5" "x6" "x7" "x8"]);
-    Z = expand(expansion, X);
-    [M R w] = least_squares(Z, Y);
-    results(p+1, :) = [p R];
+    Z = expand(expansion, X_tr);
+    [M R w] = least_squares(Z, Y_tr);
+    results(p+1, 1:2) = [p R];
+    
+    Z_t = expand(expansion, X);
+    Y_pred = w' * Z_t;
+    R_t = norm(Y - Y_pred')^2;
+    results(p+1, 3) = [R_t];
+%     Z = expand(expansion, X_te);
+%     [M R w] = least_squares(Z, Y_te);
+%     results(p+1, 3) = [R];
 end
 
+
 scatter(results(:,1), results(:,2), '*'); hold on
+scatter(results(:,1), results(:,3), '*');
 for i=1:length(results)-1
     plot([results(i,1) results(i+1,1)], [results(i,2) results(i+1,2)], 'r')
+    plot([results(i,1) results(i+1,1)], [results(i,3) results(i+1,3)], 'b')
 end
 
 %{
