@@ -2,6 +2,9 @@ d = importdata("traindata.txt");
 Test = importdata("testinputs.txt");
 X = d(:,1:8); y = d(:,9);
 
+% variables = ["x1" "x2" "x3" "x4" "x5" "x6" "x7" "x8"]
+% variables = ["x1" "x2" "x3" "x4" "x5" "x6" "na" "x8"]
+variables = ["x1" "x2" "na" "x4" "x5" "na" "na" "x8"]
 N = length(X);
 K = 10;
 fold_sizes = get_fold_sizes(X, K);
@@ -12,9 +15,7 @@ results_te = zeros(max_p + 1, 2);
 ws = {};
 
 for p=0:max_p
-%     poly = get_polynomial(p, ["x1" "x2" "x3" "x4" "x5" "x6" "x7" "x8"]);
-%     poly = get_polynomial(p, ["x1" "x2" "x3" "x4" "x5" "x6" "na" "x8"]);
-    poly = get_polynomial(p, ["x1" "x2" "na" "x4" "x5" "na" "na" "x8"]);
+    poly = get_polynomial(p, variables);
     
     train_error_acc = 0;
     test_error_acc = 0;
@@ -52,9 +53,7 @@ min_test_err_order = results_te(min_test_err_idx, 1);
 
 sprintf("Polynomial order: %d\nMin test error  : %f", min_test_err_order, min_test_err/(N/K)) % MSE
 
-% poly = get_polynomial(min_test_err_order, ["x1" "x2" "x3" "x4" "x5" "x6" "x7" "x8"]);
-% poly = get_polynomial(min_test_err_order, ["x1" "x2" "x3" "x4" "x5" "x6" "na" "x8"]);
-poly = get_polynomial(min_test_err_order, ["x1" "x2" "na" "x4" "x5" "na" "na" "x8"]);
+poly = get_polynomial(min_test_err_order, variables);
 
 Z = expand(poly, X);
 y_pred = ws{min_test_err_idx}' * Z;
@@ -64,7 +63,6 @@ sprintf("Polynomial order: %d\nTraining error  : %f", min_test_err_order, traini
 Z = expand(poly, Test);
 y_pred = ws{min_test_err_idx}' * Z;
 dlmwrite('predicted_values.txt', num2str(y_pred','%.7e\t'),'delimiter', '');
-% dlmwrite('test_values_and_predicted_values.txt', num2str([Test y_pred'],'%.7e\t'),'delimiter', '');
 
 function [FoldSizes] = get_fold_sizes(X, number_of_folds)
     N = length(X);
