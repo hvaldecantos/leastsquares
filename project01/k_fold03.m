@@ -6,13 +6,15 @@ N = length(X);
 K = 10;
 fold_sizes = get_fold_sizes(X, K);
 
-max_p = 9;
+max_p = 10;
 results_tr = zeros(max_p + 1, 2);
 results_te = zeros(max_p + 1, 2);
 ws = {};
 
 for p=0:max_p
-    poly = get_polynomial(p, ["x1" "x2" "x3" "x4" "x5" "x6" "x7" "x8"]);
+%     poly = get_polynomial(p, ["x1" "x2" "x3" "x4" "x5" "x6" "x7" "x8"]);
+%     poly = get_polynomial(p, ["x1" "x2" "x3" "x4" "x5" "x6" "na" "x8"]);
+    poly = get_polynomial(p, ["x1" "x2" "na" "x4" "x5" "na" "na" "x8"]);
     
     train_error_acc = 0;
     test_error_acc = 0;
@@ -25,7 +27,7 @@ for p=0:max_p
         X_te = X(i_start:i_end, :);  y_te = y(i_start:i_end, :);
         
         Z_tr = expand(poly, X_tr);
-        [M R_tr w] = least_squares(Z_tr, y_tr);
+        [M, R_tr, w] = least_squares(Z_tr, y_tr);
         train_error_acc = train_error_acc + R_tr;
 
         Z_te = expand(poly, X_te);
@@ -43,12 +45,19 @@ figure_number = figure_number - 1;
 plot_errors(results_te, 'r');
 
 % Find the predicted values
-[min_err min_idx] = min(results_te);
+[min_test_err, min_test_err_idx] = min(results_te);
+min_test_err_idx = min_test_err_idx(2);
+min_test_err = min_test_err(2);
+min_test_err_order = results_te(min_test_err_idx, 1);
 
-p = results_te(min_idx(1, 2), 1);
-poly = get_polynomial(p, ["x1" "x2" "x3" "x4" "x5" "x6" "x7" "x8"]);
+
+sprintf("Polynomial order: %d\nMin test error  : %f", min_test_err_order, min_test_err)
+
+% poly = get_polynomial(p, ["x1" "x2" "x3" "x4" "x5" "x6" "x7" "x8"]);
+% poly = get_polynomial(p, ["x1" "x2" "x3" "x4" "x5" "x6" "na" "x8"]);
+poly = get_polynomial(min_test_err_order, ["x1" "x2" "na" "x4" "x5" "na" "na" "x8"]);
 Z = expand(poly, Test);
-y_pred = ws{p+1}' * Z;
+y_pred = ws{min_test_err_idx}' * Z;
 dlmwrite('predicted_values.txt', num2str(y_pred','%.7e\t'),'delimiter', '');
 % dlmwrite('test_values_and_predicted_values.txt', num2str([Test y_pred'],'%.7e\t'),'delimiter', '');
 
