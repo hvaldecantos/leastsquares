@@ -28,13 +28,13 @@ for p=0:max_p
         
         Z_tr = expand(poly, X_tr);
         [M, R_tr, w] = least_squares(Z_tr, y_tr);
-        train_error_acc = train_error_acc + R_tr;
+        train_error_acc = train_error_acc + R_tr; % SSE
 
         Z_te = expand(poly, X_te);
-        test_error_acc = test_error_acc + sum((y_te' - w'*Z_te).^2);
+        test_error_acc = test_error_acc + sum((y_te' - w'*Z_te).^2); % SSE
     end
-    results_tr(p+1, :) = [p train_error_acc/K];
-    results_te(p+1, :) = [p test_error_acc/K];
+    results_tr(p+1, :) = [p train_error_acc/K]; % mean of SSEs
+    results_te(p+1, :) = [p test_error_acc/K];  % mean of SSEs
     ws{p+1} = w;
 end
 
@@ -50,7 +50,7 @@ min_test_err_idx = min_test_err_idx(2);
 min_test_err = min_test_err(2);
 min_test_err_order = results_te(min_test_err_idx, 1);
 
-sprintf("Polynomial order: %d\nMin test error  : %f", min_test_err_order, min_test_err)
+sprintf("Polynomial order: %d\nMin test error  : %f", min_test_err_order, min_test_err/(N/K)) % MSE
 
 % poly = get_polynomial(min_test_err_order, ["x1" "x2" "x3" "x4" "x5" "x6" "x7" "x8"]);
 % poly = get_polynomial(min_test_err_order, ["x1" "x2" "x3" "x4" "x5" "x6" "na" "x8"]);
@@ -58,7 +58,7 @@ poly = get_polynomial(min_test_err_order, ["x1" "x2" "na" "x4" "x5" "na" "na" "x
 
 Z = expand(poly, X);
 y_pred = ws{min_test_err_idx}' * Z;
-training_error = sum((y - y_pred').^2);
+training_error = sum((y - y_pred').^2)/N; % MSE
 sprintf("Polynomial order: %d\nTraining error  : %f", min_test_err_order, training_error)
 
 Z = expand(poly, Test);
