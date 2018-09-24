@@ -63,11 +63,11 @@ plot_errors(results_tr(fold_start:fold_end, :), 'b');
 figure_number = figure_number - 1;
 plot_errors(results_te(fold_start:fold_end, :), 'r');
 
-sprintf("Polynomial order: %d\nMin test error  : %f", min_test_err_order, min_test_err/(N/K)) % MSE
-
 variables = vars{min_test_err_idx};
 poly = get_polynomial(min_test_err_order, variables);
 sprintf("Features selected: [%s]",join(variables))
+
+sprintf("Polynomial order: %d\nMin test error  : %f", min_test_err_order, min_test_err/(N/K)) % MSE
 
 Z = expand(poly, X);
 y_pred = ws{min_test_err_idx}' * Z;
