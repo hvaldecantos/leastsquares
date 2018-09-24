@@ -5,6 +5,7 @@ X = d(:,1:8); y = d(:,9);
 % variables = ["x1" "x2" "x3" "x4" "x5" "x6" "x7" "x8"]
 % variables = ["x1" "x2" "x3" "x4" "x5" "x6" "na" "x8"]
 variables = ["x1" "x2" "na" "x4" "x5" "na" "na" "x8"]
+
 N = length(X);
 K = 10;
 fold_sizes = get_fold_sizes(X, K);
@@ -63,10 +64,3 @@ sprintf("Polynomial order: %d\nTraining error  : %f", min_test_err_order, traini
 Z = expand(poly, Test);
 y_pred = ws{min_test_err_idx}' * Z;
 dlmwrite('predicted_values.txt', num2str(y_pred','%.7e\t'),'delimiter', '');
-
-function [FoldSizes] = get_fold_sizes(X, number_of_folds)
-    N = length(X);
-    fold_size = floor(N / number_of_folds);
-    FoldSizes = repmat(fold_size,1,number_of_folds);
-    FoldSizes(1, 1:rem(N, number_of_folds)) = FoldSizes(1, 1:rem(N, number_of_folds)) + 1;
-end
