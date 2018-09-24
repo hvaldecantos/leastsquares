@@ -78,13 +78,6 @@ Z = expand(poly, Test);
 y_pred = ws{min_test_err_idx}' * Z;
 dlmwrite('predicted_values.txt', num2str(y_pred','%.7e\t'),'delimiter', '');
 
-function [FoldSizes] = get_fold_sizes(X, number_of_folds)
-    N = length(X);
-    fold_size = floor(N / number_of_folds);
-    FoldSizes = repmat(fold_size,1,number_of_folds);
-    FoldSizes(1, 1:rem(N, number_of_folds)) = FoldSizes(1, 1:rem(N, number_of_folds)) + 1;
-end
-
 function [A] = get_combination(vars)
     n = numel(vars);
     max = (2^n)-1;
