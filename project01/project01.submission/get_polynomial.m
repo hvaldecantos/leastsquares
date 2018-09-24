@@ -7,6 +7,8 @@ function p = get_polynomial(degree, vars)
             for i=1:degree
                 index = index + 1;
                 p{index} = {str2func(sprintf("@(%s)(%s.^%d)",vars(v),vars(v),i)), v};
+                % p{index} = {str2func(sprintf("@(%s)(sin(%s.^(1/%d)))",vars(v),vars(v),i)), v};
+                % p{index} = {str2func(sprintf("@(%s)(%s.^(1/%d))",vars(v),vars(v),i)), v};
             end
         end
     end
