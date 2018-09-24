@@ -40,10 +40,8 @@ for p=0:max_p
     ws{p+1} = w;
 end
 
-global figure_number;
-figure_number = 1;
 plot_errors(results_tr, 'b');
-figure_number = figure_number - 1;
+hold on;
 plot_errors(results_te, 'r');
 
 % Find the predicted values

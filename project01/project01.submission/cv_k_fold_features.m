@@ -55,12 +55,11 @@ min_test_err_idx = min_test_err_idx(2);
 min_test_err = min_test_err(2);
 min_test_err_order = results_te(min_test_err_idx, 1);
 
-global figure_number;
-figure_number = 1;
 fold_start = min_test_err_idx - rem(min_test_err_idx - 1, max_p + 1);
 fold_end = fold_start + max_p;
+
 plot_errors(results_tr(fold_start:fold_end, :), 'b');
-figure_number = figure_number - 1;
+hold on;
 plot_errors(results_te(fold_start:fold_end, :), 'r');
 
 variables = vars{min_test_err_idx};
