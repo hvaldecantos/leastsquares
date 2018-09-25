@@ -65,7 +65,7 @@ INSTRUCTIONS:
 
   1. Open Matlab and set the project path to the folder containing these
      above mentioned files.
-  2. Doble-click the main file [cv_k_fold.m] to open it on the editor area.
+  2. Doble-click the main file 'cv_k_fold.m' to open it on the editor area.
   3. Execute or run the file by clicking on the run button or pressing F5 key.
   4. A figure with the average Rs for each polynomial order will pop-up.
   5. A file named 'predicted_values.txt' will be written in the same project
