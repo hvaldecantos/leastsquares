@@ -9,7 +9,7 @@ README FILE for submission Project 1
   Students:   Valdecantos Hector - Wagh Gaurav
   Instructor: Linwei Wang
 
-This is a Matlab project ..
+This is a Matlab project on linear feature engineering.
 
 CONTENT:
 
@@ -70,4 +70,3 @@ INSTRUCTIONS:
   4. A figure with the average Rs for each polynomial order will pop-up.
   5. A file named 'predicted_values.txt' will be written in the same project
      directory with the 103 prediction based on the proposed model.
-     
